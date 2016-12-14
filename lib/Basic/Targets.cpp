@@ -37,6 +37,7 @@
 #include "Targets/TCE.h"
 #include "Targets/WebAssembly.h"
 #include "Targets/X86.h"
+#include "Targets/M680x0.h"
 #include "Targets/XCore.h"
 #include "clang/Basic/Diagnostic.h"
 #include "llvm/ADT/StringExtras.h"
@@ -249,6 +250,9 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
 
   case llvm::Triple::nios2:
     return new LinuxTargetInfo<Nios2TargetInfo>(Triple, Opts);
+
+  case llvm::Triple::m680x0:
+    return new M680x0TargetInfo(Triple, Opts);
 
   case llvm::Triple::mips:
     switch (os) {

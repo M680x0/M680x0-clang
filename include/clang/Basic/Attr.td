@@ -326,6 +326,7 @@ def TargetMips32 : TargetArch<["mips", "mipsel"]>;
 def TargetAnyMips : TargetArch<["mips", "mipsel", "mips64", "mips64el"]>;
 def TargetMSP430 : TargetArch<["msp430"]>;
 def TargetRISCV : TargetArch<["riscv32", "riscv64"]>;
+def TargetM680x0 : TargetArch<["m680x0"]>;
 def TargetX86 : TargetArch<["x86"]>;
 def TargetAnyX86 : TargetArch<["x86", "x86_64"]>;
 def TargetWindows : TargetArch<["x86", "x86_64", "arm", "thumb", "aarch64"]> {
@@ -1293,6 +1294,16 @@ def MSP430Interrupt : InheritableAttr, TargetSpecificAttr<TargetMSP430> {
   // NOTE: If you add any additional spellings, ARMInterrupt's, MipsInterrupt's
   // and AnyX86Interrupt's spellings must match.
   let Spellings = [GCC<"interrupt">];
+  let Args = [UnsignedArgument<"Number">];
+  let ParseKind = "Interrupt";
+  let HasCustomParsing = 1;
+  let Documentation = [Undocumented];
+}
+
+def M680x0Interrupt : InheritableAttr, TargetSpecificAttr<TargetM680x0> {
+  // NOTE: If you add any additional spellings, ARMInterrupt's, MipsInterrupt's
+  // and AnyX86Interrupt's spellings must match.
+  let Spellings = [GNU<"interrupt">];
   let Args = [UnsignedArgument<"Number">];
   let ParseKind = "Interrupt";
   let HasCustomParsing = 1;

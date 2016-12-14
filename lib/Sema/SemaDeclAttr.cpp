@@ -5356,6 +5356,41 @@ static void handleMSP430InterruptAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   D->addAttr(UsedAttr::CreateImplicit(S.Context));
 }
 
+static void handleM680x0InterruptAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+  if (!checkAttributeNumArgs(S, AL, 1))
+    return;
+
+  if (!AL.isArgExpr(0)) {
+    S.Diag(AL.getLoc(), diag::err_attribute_argument_type)
+        << AL << AANT_ArgumentIntegerConstant;
+    return;
+  }
+
+  // FIXME: Check for decl - it should be void ()(void).
+
+  Expr *NumParamsExpr = static_cast<Expr *>(AL.getArgAsExpr(0));
+  llvm::APSInt NumParams(32);
+  if (!NumParamsExpr->isIntegerConstantExpr(NumParams, S.Context)) {
+    S.Diag(AL.getLoc(), diag::err_attribute_argument_type)
+        << AL << AANT_ArgumentIntegerConstant
+        << NumParamsExpr->getSourceRange();
+    return;
+  }
+
+  unsigned Num = NumParams.getLimitedValue(255);
+  if ((Num & 1) || Num > 30) {
+    S.Diag(AL.getLoc(), diag::err_attribute_argument_out_of_bounds)
+        << AL << (int)NumParams.getSExtValue()
+        << NumParamsExpr->getSourceRange();
+    return;
+  }
+
+  D->addAttr(::new (S.Context)
+              M680x0InterruptAttr(AL.getLoc(), S.Context, Num,
+                                  AL.getAttributeSpellingListIndex()));
+  D->addAttr(UsedAttr::CreateImplicit(S.Context));
+}
+
 static void handleMipsInterruptAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   // Only one optional argument permitted.
   if (AL.getNumArgs() > 1) {
@@ -5566,6 +5601,9 @@ static void handleInterruptAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   switch (S.Context.getTargetInfo().getTriple().getArch()) {
   case llvm::Triple::msp430:
     handleMSP430InterruptAttr(S, D, AL);
+    break;
+  case llvm::Triple::m680x0:
+    handleM680x0InterruptAttr(S, D, AL);
     break;
   case llvm::Triple::mipsel:
   case llvm::Triple::mips:
