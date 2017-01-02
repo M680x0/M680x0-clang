@@ -252,6 +252,7 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
     return new LinuxTargetInfo<Nios2TargetInfo>(Triple, Opts);
 
   case llvm::Triple::m680x0:
+  case llvm::Triple::m68k:
     return new M680x0TargetInfo(Triple, Opts);
 
   case llvm::Triple::mips:
