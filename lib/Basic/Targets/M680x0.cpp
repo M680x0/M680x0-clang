@@ -62,6 +62,8 @@ void M680x0TargetInfo::getTargetDefines(const LangOptions &Opts,
   Builder.defineMacro("M680x0");
   Builder.defineMacro("__M680x0__");
   Builder.defineMacro("__M68K__");
+  Builder.defineMacro("__m68k__");
+  Builder.defineMacro("__mc68000__");
   // FIXME: defines for different 'flavours' of MCU
 }
 
